@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import db from "./firebase-info.js";
 import { addDoc, collection } from "firebase/firestore";
 import { FileUploader } from "react-drag-drop-files";
+import { Link } from "react-router-dom";
 
 const Upload = () => {
     const [file, setFile] = useState();
@@ -44,8 +45,6 @@ const Upload = () => {
 
         setArray(array);
     };
-
-    // const headerKeys = Object.keys(Object.assign({}, ...array));
 
     return (
         <div className="flex justify-center items-center flex-col">
@@ -98,6 +97,14 @@ const Upload = () => {
             >
                 Upload
             </button>
+            <Link to="/view">
+                <button
+                    type="button"
+                    className="mt-5 w-48 text-white bg-green-600 hover:bg-green-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 "
+                >
+                    View data{" "}
+                </button>
+            </Link>
         </div>
     );
 };

@@ -4,7 +4,8 @@ import {
     getDocs,
     updateDoc,
     doc,
-    setDoc,
+    deleteDoc,
+    onSnapshot,
 } from "firebase/firestore";
 import db from "./firebase-info";
 import { Link } from "react-router-dom";
@@ -17,7 +18,9 @@ const View = () => {
         try {
             const rows = (await getDocs(collection(db, "data"))).docs;
             const data = rows.map((row) => row.data());
-            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+                data[i].id = rows[i].id;
+            }
             setRows(data);
         } catch (error) {
             console.log(error);
@@ -49,15 +52,13 @@ const View = () => {
     };
 
     useEffect(() => {
-        const unsubscribe = () => {
+        const unsubscribe = onSnapshot(collection(db, "data"), () => {
             getData();
-        };
+        });
         return () => {
             unsubscribe();
         };
     }, []);
-
-    // console.log("rows", rows);
 
     return (
         <div className="bg-gray-300 flex flex-col w-screen h-screen items-center justify-center">
@@ -74,6 +75,9 @@ const View = () => {
                             <th scope="col" className="px-6 py-3">
                                 Sex
                             </th>
+                            <th scope="col" className=" sr-only">
+                                delete
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,9 +93,15 @@ const View = () => {
                                               disabled={disabled}
                                               type="text"
                                               value={item.Name}
-                                              onChange={(e) =>
-                                                  handleNameChange(e, index)
-                                              }
+                                              onChange={async (e) => {
+                                                  handleNameChange(e, index);
+                                                  await updateDoc(
+                                                      doc(db, "data", item.id),
+                                                      {
+                                                          Name: item.Name,
+                                                      }
+                                                  );
+                                              }}
                                           />
                                       </td>
                                       <td className="px-6 py-4">
@@ -101,9 +111,15 @@ const View = () => {
                                               ref={input}
                                               type="text"
                                               value={item.Age}
-                                              onChange={(e) =>
-                                                  handleAgeChange(e, index)
-                                              }
+                                              onChange={async (e) => {
+                                                  handleAgeChange(e, index);
+                                                  await updateDoc(
+                                                      doc(db, "data", item.id),
+                                                      {
+                                                          Age: item.Age,
+                                                      }
+                                                  );
+                                              }}
                                           />
                                       </td>
                                       <td className="px-6 py-4">
@@ -115,8 +131,26 @@ const View = () => {
                                               value={item.Sex}
                                               onChange={async (e) => {
                                                   handleSexChange(e, index);
+                                                  await updateDoc(
+                                                      doc(db, "data", item.id),
+                                                      {
+                                                          Sex: item.Sex,
+                                                      }
+                                                  );
                                               }}
                                           />
+                                      </td>
+                                      <td className="px-6 py-4">
+                                          <button
+                                              className="text-white bg-red-800 hover:bg-red-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-2 py-1"
+                                              onClick={async () => {
+                                                  await deleteDoc(
+                                                      doc(db, "data", item.id)
+                                                  );
+                                              }}
+                                          >
+                                              Delete
+                                          </button>
                                       </td>
                                   </tr>
                               ))
