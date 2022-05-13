@@ -47,7 +47,7 @@ const Upload = () => {
     };
 
     return (
-        <div className="flex justify-center items-center flex-col">
+        <div className="flex pt-5 justify-center items-center flex-col">
             <div className="self-center">
                 <h1 className=" font-mono mb-5 text-4xl font-bold">
                     Upload a file!
@@ -70,7 +70,6 @@ const Upload = () => {
                     handleChange={(file) => {
                         setFile(file);
                     }}
-                    style={{ width: "75%" }}
                     classes="h-12"
                     label="Upload a file"
                     name="file"
